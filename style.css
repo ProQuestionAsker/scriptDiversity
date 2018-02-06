@@ -1,0 +1,22 @@
+#characterDetails{
+	display: flex;
+	justify-content: space-between;
+	flex-direction: column;
+	margin-top: 2rem;
+}
+
+.g-group{
+	display: flex;
+	justify-content: space-between;
+	margin: 0.5rem;
+}
+
+.label{
+	width: 25%;
+	margin: 0 auto;
+}
+
+.input{
+	width: 20%;
+	margin: 0 auto;
+}

@@ -5,6 +5,7 @@ let parsedScript = null
 let scriptOnly = null
 let nestedChar = null
 let characterLines = null
+let metaLines = null
 
 
 document.getElementById('input-file')
@@ -47,8 +48,7 @@ function setup(){
 function cleanScript(){
 	isolateScript()
 	isolateCharacters()
-	console.log(characterLines)
-
+	setupForm()
 }
 
 
@@ -445,5 +445,78 @@ function isolateCharacters(){
 			
 		return {name:d.key, lines:secondMap, totalLines:secondMap.length} 
 	})
+
+}
+
+function setupForm(){
+	const details = d3.select('#characterDetails')
+
+	const groups = details.selectAll('.g-group')
+		.data(characterLines)
+
+	const groupEnter = groups
+		.enter()
+		.append('g')
+		.attr('class', d => `g-group g-${d.name}`)
+
+	groupEnter
+		.append('text')
+		.text(d => d.name)
+		.attr('class', 'label')
+
+	groupEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--gender')
+		.attr('placeholder', d => `Enter ${d.name}s Gender`)
+
+	groupEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--race')
+		.attr('placeholder', d => `Enter ${d.name}s Race`)
+
+	groupEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--ability')
+		.attr('placeholder', d => `Enter ${d.name}s Ability`)
+
+	details
+		.append('input')
+		.attr('type', 'button')
+		.attr('value', 'Submit These Details')
+		.attr('class', 'button button--submit')
+		.on('click', handleClick)
+}
+
+function handleClick(){
+
+	//serialize data function
+
+	let inputGender = handleFormElements('.input--gender')
+	let inputRace = handleFormElements('.input--race')
+	let inputAbility = handleFormElements('.input--ability')
+
+	metaLines = characterLines
+
+	metaLines.forEach((d, i) => d.gender = inputGender[i])
+	metaLines.forEach((d, i) => d.race = inputRace[i])
+	metaLines.forEach((d, i) => d.ability = inputAbility[i])
+
+	console.log(metaLines)
+
+}
+
+function handleFormElements(selector){
+	let form = d3.select('#characterDetails')
+
+	let formNodeList = form.selectAll(selector)._groups[0]
+
+	let formArray = Array.from(formNodeList)
+
+	let formArrayValue = formArray.map(d => d.value)
+
+	return formArrayValue
 
 }
