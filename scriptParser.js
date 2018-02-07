@@ -6,6 +6,9 @@ let scriptOnly = null
 let nestedChar = null
 let characterLines = null
 let metaLines = null
+let title0 = null
+let title1 = null
+let title2 = null
 
 
 document.getElementById('input-file')
@@ -451,6 +454,43 @@ function isolateCharacters(){
 function setupForm(){
 	const details = d3.select('#characterDetails')
 
+	let defaultTitles = ['gender', 'race', 'ability']
+	title0 = defaultTitles[0]
+	title1 = defaultTitles[1]
+	title2 = defaultTitles[2]
+
+	const titles = details
+		.append('g')
+		.attr('class', 'g-title')
+
+	titles
+		.append('text')
+		.text('Character Name')
+		.attr('class', 'label--title')
+
+	const titleGroups = titles.selectAll('.g-title__entry')
+		.data(defaultTitles)
+
+	const titleGroupsEnter = titleGroups
+		.enter()
+		.append('g')
+		.attr('class', (d, i) => `g-title__entry title__entry${i}`)
+
+
+	titleGroupsEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', (d, i) => `input--title input--title__${i}`)
+		.attr('value', (d, i) => defaultTitles[i])
+		.attr('data-index', (d, i) => i)
+
+	titleGroupsEnter
+		.append('input')
+		.attr('type', 'button')
+		.attr('class', 'button button--updateTitle')
+		.attr('value', '✔')
+		.on('click', updateTitle)
+
 	const groups = details.selectAll('.g-group')
 		.data(characterLines)
 
@@ -467,20 +507,20 @@ function setupForm(){
 	groupEnter
 		.append('input')
 		.attr('type', 'text')
-		.attr('class', 'input input--gender')
-		.attr('placeholder', d => `Enter ${d.name}s Gender`)
+		.attr('class', 'input input--0')
+		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[0]}`)
 
 	groupEnter
 		.append('input')
 		.attr('type', 'text')
-		.attr('class', 'input input--race')
-		.attr('placeholder', d => `Enter ${d.name}s Race`)
+		.attr('class', 'input input--1')
+		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[1]}`)
 
 	groupEnter
 		.append('input')
 		.attr('type', 'text')
-		.attr('class', 'input input--ability')
-		.attr('placeholder', d => `Enter ${d.name}s Ability`)
+		.attr('class', 'input input--2')
+		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[2]}`)
 
 	details
 		.append('input')
@@ -488,21 +528,34 @@ function setupForm(){
 		.attr('value', 'Submit These Details')
 		.attr('class', 'button button--submit')
 		.on('click', handleClick)
+
+	d3.select('#detailToggle')
+		.on('click', toggleDetail)
 }
 
 function handleClick(){
 
 	//serialize data function
 
-	let inputGender = handleFormElements('.input--gender')
-	let inputRace = handleFormElements('.input--race')
-	let inputAbility = handleFormElements('.input--ability')
+	let inputGender = handleFormElements('.input--0')
+	let inputRace = handleFormElements('.input--1')
+	let inputAbility = handleFormElements('.input--2')
 
 	metaLines = characterLines
 
-	metaLines.forEach((d, i) => d.gender = inputGender[i])
-	metaLines.forEach((d, i) => d.race = inputRace[i])
-	metaLines.forEach((d, i) => d.ability = inputAbility[i])
+	metaLines.forEach((d, i) => d[title0] = inputGender[i])
+	metaLines.forEach((d, i) => d[title1] = inputRace[i])
+	metaLines.forEach((d, i) => d[title2] = inputAbility[i])
+
+/*	let mappedLines = metaLines.map((d, i) => {
+		let cat0 = inputGender[i]
+		let cat1 = inputRace[i]
+		let cat2 = inputAbility[i]
+
+		return {[title0]:cat0, title1: cat1, title2: cat2}
+	})*/
+
+	toggleDetail()
 
 	console.log(metaLines)
 
@@ -519,4 +572,41 @@ function handleFormElements(selector){
 
 	return formArrayValue
 
+}
+
+function toggleDetail(){
+	let form = d3.select('#characterDetails')
+
+	form
+		.classed('is-hidden', !form.classed('is-hidden'))
+
+	let formClass = form.classed('is-hidden')
+
+	let toggleButton = d3.select('#detailToggle')
+
+	toggleButton
+		.attr('value', (formClass) ? 'Show Details' : 'Hide Details!')
+}
+
+function updateTitle(){
+	let checkedBox = d3.select(this).node()
+	let titleBox = checkedBox.previousElementSibling
+	let titleValue = titleBox.value
+
+	let titleGroup = d3.select('.g-title')
+
+	let changedIndex = titleBox.dataset.index
+
+	let changeableInputs = d3.selectAll(`.input--${changedIndex}`)
+
+	changeableInputs
+		.attr('placeholder', (d, i) => `Enter ${d.name}s ${titleValue}`)
+
+	if (changedIndex == 0) {
+		title0 = titleValue
+	} else if (changedIndex == 1) {
+		title1 = titleValue
+	} else if (changedIndex == 2) {
+		title2 = titleValue
+	}
 }
