@@ -1,3 +1,5 @@
+
+// data variables
 let script = null
 let scriptRegex = null
 let inline = null
@@ -10,6 +12,24 @@ let title0 = null
 let title1 = null
 let title2 = null
 
+// chart variables
+let width = 0;
+let height = 0;
+let graphicW = 0;
+let graphicH = 0;
+let fontSize = 12;
+let margin = null;
+let maxRow = null
+
+const MARGIN = 32;
+
+const scaleR = d3.scaleSqrt();
+const scaleStrengthX = d3.scaleLinear();
+const scaleStrengthY = d3.scaleLinear();
+
+const bodySel = d3.select('body');
+const chartSel = bodySel.select('.graphic');
+const svg = chartSel.select('svg');
 
 document.getElementById('input-file')
   .addEventListener('change', getFile)
@@ -547,15 +567,9 @@ function handleClick(){
 	metaLines.forEach((d, i) => d[title1] = inputRace[i])
 	metaLines.forEach((d, i) => d[title2] = inputAbility[i])
 
-/*	let mappedLines = metaLines.map((d, i) => {
-		let cat0 = inputGender[i]
-		let cat1 = inputRace[i]
-		let cat2 = inputAbility[i]
-
-		return {[title0]:cat0, title1: cat1, title2: cat2}
-	})*/
 
 	toggleDetail()
+	setupChart()
 
 	console.log(metaLines)
 
@@ -610,3 +624,142 @@ function updateTitle(){
 		title2 = titleValue
 	}
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function setupChart(){
+	setupDOM()
+	updateDimensions()
+	updateScales()
+	updateDOM()
+	nestLines()
+
+}
+
+function translate(x, y) {
+	return `translate(${x}, ${y})`;
+}
+
+function setupDOM() {
+
+	const gEnter = svg
+		.append('g')
+		.attr('class', 'g-plot');
+
+	gEnter
+		.append('g')
+		.attr('class', 'g-circleChar');
+}
+
+function updateDimensions() {
+	width = chartSel.node().offsetWidth;
+	height = window.innerHeight;
+	console.log(width)
+
+	fontSize = 11;
+
+	margin = {
+		top: fontSize * 10,
+		left: fontSize * 2,
+		right: fontSize * 2,
+		bottom: fontSize * 10,
+	};
+
+	// graphicW = isMobile ? 320 : 450;
+	graphicW = width;
+	graphicH = 600;
+}
+
+function updateScales() {
+	scaleStrengthX
+		.domain([-1, 1])
+		.range([1, 1]);
+
+	scaleStrengthY
+		.domain([0, 1])
+		.range([0.9, 0.6]);
+
+	const maxCircleR = 40;
+
+	scaleR
+		.range([3, maxCircleR])
+		.domain(d3.extent(metaLines, d => d.totalLines));
+
+}
+
+function updateDOM() {
+	svg.attr('width', graphicW).attr('height', graphicH);
+
+	const g = svg.select('.g-plot');
+
+	g
+		.attr('transform', translate(10, fontSize));
+
+
+	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
+
+	const simulation = d3.forceSimulation(metaLines)
+		.force('x', d3.forceX(graphicW/2)
+			.strength(0.5))
+		.force('y', d3.forceY(graphicH/2)
+			.strength(0.5))
+		.force('collide', forceCollide)
+		//.stop()
+
+	for(var i = 0; i < 500; ++i) simulation.tick()
+
+	const circleChar = g.select('.g-circleChar');
+
+	const circleGroup = circleChar
+		.selectAll('.g-circle')
+		.data(metaLines);
+
+	const circleGroupEnter = circleGroup
+		.enter()
+		.append('g')
+		.attr('class', 'g-circle')
+
+	circleGroupEnter
+		.append('circle')
+		.attr('class', d => `circle circle--${d.name}`)
+		.attr('r', d => scaleR(d.totalLines))
+		.attr('cx', d => d.x)
+		.attr('cy', d => d.y)
+		.style('stroke', '#000')
+		//.on('mouseover', handleMouseover)
+		//.on('mouseout', handleMouseout)
+
+}
+
+function nestLines(){
+	let nested0 = d3.nest()
+		.key(d => d[title0])
+		.rollup(e => { 
+			return {
+				'length': e.length, 
+				'totalLines': d3.sum(e, d => d.totalLines)
+			}
+		})
+		.entries(metaLines)
+
+	let nested1 = d3.nest()
+		.key(d => d[title1])
+		.rollup(e => { 
+			return {
+				'length': e.length, 
+				'totalLines': d3.sum(e, d => d.totalLines)
+			}
+		})
+		.entries(metaLines)
+
+	let nested2 = d3.nest()
+		.key(d => d[title2])
+		.rollup(e => { 
+			return {
+				'length': e.length, 
+				'totalLines': d3.sum(e, d => d.totalLines)
+			}
+		})
+		.entries(metaLines)
+}
+
