@@ -20,6 +20,8 @@ let graphicH = 0;
 let fontSize = 12;
 let margin = null;
 let maxRow = null
+let nestedLengths = null
+let activeLength = null
 
 const MARGIN = 32;
 
@@ -666,8 +668,8 @@ function updateDimensions() {
 	};
 
 	// graphicW = isMobile ? 320 : 450;
-	graphicW = width;
-	graphicH = 600;
+	graphicW = width - (margin.left + margin.right);
+	graphicH = height - (margin.top + margin.bottom);
 }
 
 function updateScales() {
@@ -684,6 +686,62 @@ function updateScales() {
 	scaleR
 		.range([3, maxCircleR])
 		.domain(d3.extent(metaLines, d => d.totalLines));
+
+}
+
+function updateButtons(){
+
+	let sort0 = d3.select('#sortButton--0')
+
+	sort0
+		.attr('value', title0)
+		.on('click', d => {	
+			handleSortButtonClick(sort0)
+		})
+
+	let sort1 = d3.select('#sortButton--1')
+
+	sort1
+		.attr('value', title1)
+		.on('click', d => {	
+			handleSortButtonClick(sort1)
+		})
+
+	let sort2 = d3.select('#sortButton--2')
+
+	sort2
+		.attr('value', title2)
+		.on('click', d => {	
+			handleSortButtonClick(sort2)
+		})
+
+}
+
+function handleSortButtonClick(input){
+
+	let activeButtons = d3.selectAll('.sortButton.is-active')
+
+	activeLength = activeButtons.size()
+
+	if (activeLength === 0){
+		input
+			.classed('is-active', !input.classed('is-active'))
+	}
+
+	if (activeLength === 1){
+		input
+			.classed('is-active', !input.classed('is-active'))
+
+		findSmallestCategory()
+	}
+
+	if (activeLength === 2){
+		d3.selectAll('.sortButton.is-active')
+			.classed('is-active', false)
+
+		input
+			.classed('is-active', !input.classed('is-active'))
+	}
 
 }
 
@@ -729,6 +787,8 @@ function updateDOM() {
 		//.on('mouseover', handleMouseover)
 		//.on('mouseout', handleMouseout)
 
+		updateButtons()
+
 }
 
 function nestLines(){
@@ -761,5 +821,32 @@ function nestLines(){
 			}
 		})
 		.entries(metaLines)
+
+	nestedLengths = {[title0]:nested0.length, [title1]:nested1.length, [title2]:nested2.length}
+
+}
+
+function findSmallestCategory(){
+
+	let selectedCat = d3.selectAll('.is-active')._groups[0]
+
+
+
+	console.log({selectedCat})
+
+		let selectedArray = []
+
+		let selectedValues = Array.from(selectedCat).forEach(d => {
+			let val = d.value
+
+			selectedArray.push(val)
+		})
+
+	//nestedLengths.reduce((result, key) => ({ ...result, [key]: selectedCat[key] }), {});
+
+
+	let smallestCat = Object.keys(nestedLengths).reduce((a, b) => nestedLengths[a] < nestedLengths[b] ? a : b);
+
+	console.log({nestedLengths, smallestCat})
 }
 
