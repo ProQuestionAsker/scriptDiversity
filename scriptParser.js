@@ -11,6 +11,8 @@ let metaLines = null
 let title0 = null
 let title1 = null
 let title2 = null
+let firstClicked = null
+let secondClicked = null
 
 // chart variables
 let width = 0;
@@ -23,11 +25,14 @@ let maxRow = null
 let nestedLengths = null
 let activeLength = null
 
+let rowLength = 4
+
 const MARGIN = 32;
 
 const scaleR = d3.scaleSqrt();
 const scaleStrengthX = d3.scaleLinear();
 const scaleStrengthY = d3.scaleLinear();
+const colorScale = d3.scaleOrdinal(d3.schemeCategory20)
 
 const bodySel = d3.select('body');
 const chartSel = bodySel.select('.graphic');
@@ -437,6 +442,9 @@ function parseToJson(script, toks, callback) {
 	return output;
 }
 
+
+
+/////////// End of code from fountain.js ///////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function isolateScript(){
@@ -718,29 +726,38 @@ function updateButtons(){
 }
 
 function handleSortButtonClick(input){
+	input
+		.classed('is-active', !input.classed('is-active'))
 
 	let activeButtons = d3.selectAll('.sortButton.is-active')
 
 	activeLength = activeButtons.size()
 
-	if (activeLength === 0){
-		input
-			.classed('is-active', !input.classed('is-active'))
-	}
+	console.log({input, activeButtons, activeLength})
+
 
 	if (activeLength === 1){
-		input
-			.classed('is-active', !input.classed('is-active'))
 
-		findSmallestCategory()
+		let splitValue = input._groups[0][0].value
+
+		splitBubbles(splitValue)
+
 	}
 
 	if (activeLength === 2){
+
+		let colorValue = input._groups[0][0].value
+
+		colorBubbles(colorValue)
+	}
+
+	if (activeLength === 0){
 		d3.selectAll('.sortButton.is-active')
 			.classed('is-active', false)
 
-		input
-			.classed('is-active', !input.classed('is-active'))
+		groupBubbles()
+
+
 	}
 
 }
@@ -754,17 +771,7 @@ function updateDOM() {
 		.attr('transform', translate(10, fontSize));
 
 
-	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
-
-	const simulation = d3.forceSimulation(metaLines)
-		.force('x', d3.forceX(graphicW/2)
-			.strength(0.5))
-		.force('y', d3.forceY(graphicH/2)
-			.strength(0.5))
-		.force('collide', forceCollide)
-		//.stop()
-
-	for(var i = 0; i < 500; ++i) simulation.tick()
+	groupBubbles()
 
 	const circleChar = g.select('.g-circleChar');
 
@@ -826,7 +833,89 @@ function nestLines(){
 
 }
 
-function findSmallestCategory(){
+function groupBubbles(){
+	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
+		.iterations(10)
+
+	const simulation = d3.forceSimulation(metaLines)
+		.force('x', d3.forceX(graphicW/2)
+			.strength(0.2))
+		.force('y', d3.forceY(graphicH/2)
+			.strength(0.5))
+		.force('collide', forceCollide)
+		//.stop()
+		.on('tick', ticked)
+
+	d3.selectAll('.circle')
+		.style('fill', '#000')
+}
+
+function splitBubbles(splitValue){
+	const splitNest = d3.nest()
+		.key(d => d[splitValue])
+		.entries(metaLines)
+
+	let length = splitNest.length
+
+	let boundingWidth = graphicW - (margin.left * 8)
+
+	const splitMap = splitNest.map((d, i) => {
+		return {key: d.key, index: i, width: boundingWidth * ((i + 1) / length)}
+	})
+
+	let widthMap = d3.map(splitMap, d => d.key)
+
+
+	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
+		.iterations(10)
+
+	const forceXSplit = d3.forceX((d, i) => widthMap.get(d[splitValue]).width)
+        .strength(0.1);
+
+    let rows = Math.ceil(splitMap.length / rowLength)
+
+	const simulation = d3.forceSimulation(metaLines)
+		.force('x', forceXSplit
+			.strength(0.2))
+		.force('y', d3.forceY(graphicH/2)
+			.strength(0.5))
+		.force('collide', forceCollide)
+		//.stop()
+		.on('tick', ticked)
+
+}
+
+function colorBubbles(colorValue){
+	const colorNest = d3.nest()
+		.key(d => d[colorValue])
+		.entries(metaLines)
+
+	const colorMap = colorNest.map((d, i) => {
+		return d.key
+	})
+
+
+	d3.selectAll('.circle')
+		.style('fill', d => colorScale(d[colorValue]))
+
+}
+
+function ticked(){
+	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
+		.iterations(10)
+
+	d3.selectAll('.circle')
+			.attr("cx", function(d) {
+				return d.x
+				/*let newX = Math.max(40, Math.min(graphicW - 40, d.x))
+				return newX*/
+			})
+			.attr("cy", function(d) {
+				return d.y
+			})
+}
+
+/*function findSmallestCategory(){
 
 	let selectedCat = d3.selectAll('.is-active')._groups[0]
 
@@ -848,5 +937,5 @@ function findSmallestCategory(){
 	let smallestCat = Object.keys(nestedLengths).reduce((a, b) => nestedLengths[a] < nestedLengths[b] ? a : b);
 
 	console.log({nestedLengths, smallestCat})
-}
+}*/
 
