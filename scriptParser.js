@@ -726,14 +726,32 @@ function updateButtons(){
 }
 
 function handleSortButtonClick(input){
+
+	// select all buttons that are active before the button was clicked
+	let activeButtons = d3.selectAll('.sortButton.is-active')
+	activeLength = activeButtons.size()
+
+	if (activeLength === 2){
+		d3.selectAll('.sortButton.is-active')
+			.classed('is-active', false)
+	}
+
 	input
 		.classed('is-active', !input.classed('is-active'))
 
-	let activeButtons = d3.selectAll('.sortButton.is-active')
-
+	// select all buttons that are active after the button was clicked
+	activeButtons = d3.selectAll('.sortButton.is-active')
 	activeLength = activeButtons.size()
 
 	console.log({input, activeButtons, activeLength})
+
+
+	if (activeLength === 0){
+		d3.selectAll('.sortButton.is-active')
+			.classed('is-active', false)
+
+		groupBubbles()
+	}
 
 
 	if (activeLength === 1){
@@ -751,14 +769,6 @@ function handleSortButtonClick(input){
 		colorBubbles(colorValue)
 	}
 
-	if (activeLength === 0){
-		d3.selectAll('.sortButton.is-active')
-			.classed('is-active', false)
-
-		groupBubbles()
-
-
-	}
 
 }
 
