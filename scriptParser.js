@@ -14,6 +14,10 @@ let title2 = null
 let firstClicked = null
 let secondClicked = null
 
+let splitNest = null
+let encCircle = null
+let boundingCircles = null
+
 // chart variables
 let width = 0;
 let height = 0;
@@ -32,7 +36,8 @@ const MARGIN = 32;
 const scaleR = d3.scaleSqrt();
 const scaleStrengthX = d3.scaleLinear();
 const scaleStrengthY = d3.scaleLinear();
-const colorScale = d3.scaleOrdinal(d3.schemeCategory20)
+const colorScale = d3.scaleOrdinal()
+	.range(["#61514d", "#00d7ac", "#a9004e", "#0071c8", "#ff7670", "#e472e1"])
 
 const bodySel = d3.select('body');
 const chartSel = bodySel.select('.graphic');
@@ -800,13 +805,39 @@ function updateDOM() {
 		.attr('r', d => scaleR(d.totalLines))
 		.attr('cx', d => d.x)
 		.attr('cy', d => d.y)
-		.style('stroke', '#000')
 		//.on('mouseover', handleMouseover)
 		//.on('mouseout', handleMouseout)
 
 		updateButtons()
 
 }
+
+/*function encloseCircles(){
+	const g = svg.select('.g-circleChar');
+
+	console.log({splitNest})
+
+	const enclosingGroup = g
+		.selectAll('.g-encl')
+		.data(metaLines)
+
+	const enclosingCircleAttr = d3.packEnclose(metaLines);
+
+	console.log({enclosingCircleAttr})
+
+	const enclosingCircle = enclosingGroup
+		.enter()
+      	.append("circle")
+      	.datum(enclosingCircleAttr)
+      	.attr("class", "enclosing-circle")
+      	.attr('r', 10)
+      	.attr("cx", function(d) {
+          return d.x;
+        })
+        .attr("cy", function(d) {
+          return d.y;
+        })
+}*/
 
 function nestLines(){
 	let nested0 = d3.nest()
@@ -843,6 +874,7 @@ function nestLines(){
 
 }
 
+
 function groupBubbles(){
 	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
 		.iterations(10)
@@ -861,7 +893,9 @@ function groupBubbles(){
 }
 
 function splitBubbles(splitValue){
-	const splitNest = d3.nest()
+	d3.selectAll('.circleEncl').remove()
+
+	splitNest = d3.nest()
 		.key(d => d[splitValue])
 		.entries(metaLines)
 
@@ -891,7 +925,28 @@ function splitBubbles(splitValue){
 			.strength(0.5))
 		.force('collide', forceCollide)
 		//.stop()
-		.on('tick', ticked)
+		.on('tick', splitTicked)
+
+	let mapValues = splitNest.map(d => {
+		let values = d.values
+
+		let mapped = values.map(e => {
+			let radius = scaleR(e.totalLines)
+			return {x: e.x, y: e.y, r: radius + 5}
+		})
+		return mapped
+	})
+
+	encCircle = mapValues.map(d => d3.packEnclose(d))
+
+	boundingCircles = svg.selectAll(".circleEncl")
+    		.data(encCircle)//, 260])
+    	.enter()
+    	.append("circle")
+	    	.attr("cx", (d) => d.x)
+	    	.attr("cy", (d) => d.y)
+	    	.attr("r", (d) => d.r + 5)
+	    	.attr('class', 'circleEncl')
 
 }
 
@@ -904,9 +959,46 @@ function colorBubbles(colorValue){
 		return d.key
 	})
 
+	colorScale.domain([0, colorMap.length])
 
 	d3.selectAll('.circle')
 		.style('fill', d => colorScale(d[colorValue]))
+
+}
+
+function splitTicked(){
+	const forceCollide = d3.forceCollide(d => scaleR(d.totalLines) + 2)
+		.iterations(10)
+
+	d3.selectAll('.circle')
+			.attr("cx", function(d) {
+				return d.x
+				/*let newX = Math.max(40, Math.min(graphicW - 40, d.x))
+				return newX*/
+			})
+			.attr("cy", function(d) {
+				return d.y
+			})
+
+	let mapValues = splitNest.map(d => {
+		let values = d.values
+
+		let mapped = values.map(e => {
+			let radius = scaleR(e.totalLines)
+			return {x: e.x, y: e.y, r: radius + 5}
+		})
+		return mapped
+	})
+
+	encCircle = mapValues.map(d => d3.packEnclose(d))
+
+	boundingCircles
+		.data(encCircle)
+		.transition()
+		.duration(80)
+		.attr("cx", (d) => d.x)
+	    .attr("cy", (d) => d.y)
+	    .attr("r", (d) => d.r + 10)
 
 }
 
@@ -923,7 +1015,10 @@ function ticked(){
 			.attr("cy", function(d) {
 				return d.y
 			})
+
 }
+
+
 
 /*function findSmallestCategory(){
 

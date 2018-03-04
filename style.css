@@ -62,3 +62,10 @@
 .sortButton.is-active{
 	background-color: #4CAF50; 
 }
+
+.circleEncl{
+	fill: none;
+	stroke-dasharray: 2;
+	stroke-width: 2px;
+	stroke: #7F99D8;
+}
