@@ -6,11 +6,34 @@
         <script src="https://d3js.org/d3.v4.js"></script>
         <script src='https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js'></script>
         <link rel="stylesheet" href="style.css">
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,700,900" rel="stylesheet">
     </head>
   
   <body>
-    <h1>Upload your Script Here</h1>
-    <input type="file" id="input-file">
+    <section class="header">
+        <h1 class="header--title">Diversity in Film</h1>
+        <p class="header--attribution">a project by <a href="twitter.com/ProQuesAsker">Amber Thomas</a></p>
+    </section>
+
+    <section class="intro">
+        <div class="intro--wrapper">
+            <img class="intro--image" src="typewriter.png">
+            <div class="intro--text">
+                <p class="intro--head"><span class="head__strong">Beauty</span> In <span class="head__strong">Color</span></p>
+                <p class="intro--prose">Film and television have the power to change the world.<br>Studies show that a diverse cast makes for a stronger story.</p>
+                <p class="intro--prose">Use this tool to see where your script needs work.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="fileUpload">
+
+        <label class="file--container">
+            Analyze Script
+            <input type="file" id="input--file" class="input--button">
+        </label>
+
+    </section>
 
     <div class="form--details">
         <input type="button" id="detailToggle" value="Hide Details">

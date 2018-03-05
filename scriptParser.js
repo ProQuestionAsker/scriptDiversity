@@ -994,10 +994,11 @@ function splitTicked(){
 
 	boundingCircles
 		.data(encCircle)
-		.transition()
-		.duration(80)
-		.attr("cx", (d) => d.x)
+		.attr("cx", (d) => d.x + 5)
 	    .attr("cy", (d) => d.y)
+	    .attr("r", 0)
+		.transition()
+		.duration(20)
 	    .attr("r", (d) => d.r + 10)
 
 }

@@ -1,3 +1,8 @@
+html, body{
+	margin: 0;
+	padding: 0;
+}
+
 #characterDetails{
 	display: flex;
 	justify-content: space-between;
@@ -69,3 +74,112 @@
 	stroke-width: 2px;
 	stroke: #7F99D8;
 }
+
+.header{
+	height: 120px;
+	margin: 0;
+	width: 100%;
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	flex-direction: column;
+}
+
+.header--title{
+	margin: 0 auto;
+	font-family: 'Space Mono', monospace;
+	font-weight: bold;
+	font-size: 40px;
+	text-align: center;
+}
+
+.header--attribution{
+	margin: 0 auto;
+	font-family: 'Muli', sans-serif;
+	font-size: 12px;
+	text-align: center;
+}
+
+.intro{
+	height: 300px;
+	background-image: url("paper_fibers_highres.png");
+	background-size: cover;
+	overflow: hidden;
+}
+
+.intro--wrapper{
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	flex-direction: row;
+  	height: 300px;
+}
+
+.intro--image{
+	max-height: 275px;
+}
+
+.intro--text{
+	font-family: 'Muli', sans-serif;
+	max-width: 500px;
+}
+
+.intro--head{
+	text-transform: uppercase;
+	font-size: 28px;
+}
+
+.head__strong{
+	font-weight: 900;
+	letter-spacing: 1px;
+}
+
+.fileUpload{
+	display: flex;
+	align-items: center;
+  	justify-content: center;
+  	flex-direction: column;
+  	margin-top: 50px;
+}
+
+.file--container{
+	overflow: hidden;
+    position: relative;
+    max-width: 360px;
+    max-height: 80px;
+    border-width: 4px;
+    border: solid;
+    border-color: black;
+    font-family: 'Muli', sans-serif;
+    font-weight: 900;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	padding: 25px 65px;
+	background-color: white;
+	display: flex;
+	align-items: center;
+}
+
+.file--container [type=file] {
+    cursor: inherit;
+/*    display: block;*/
+    font-size: 999px;
+    filter: alpha(opacity=0);
+    min-height: 360px;
+    min-width: 80px;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+}
+
+.file--container {
+
+}
+
+.file--container [type=file] {
+    cursor: pointer;
+}
+
+
