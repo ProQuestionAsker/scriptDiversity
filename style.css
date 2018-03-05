@@ -3,6 +3,25 @@ html, body{
 	padding: 0;
 }
 
+a{
+/*	background-image: linear-gradient(to right, rgba(255, 255, 255, 0) 50%, #CCC 50%);
+	background-position: 0 0;
+	background-size: 200% auto;
+	transition: background-position .5s;*/
+	background-image: linear-gradient(180deg,transparent 0,#D4F8F1 0);
+	background-position: 0 .8em;
+    background-repeat: no-repeat;
+    transition: background-position .08s ease-out!important;
+    box-shadow: none!important;
+    padding: 0!important;
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+	background-position: 0 0em;
+}
+
 #characterDetails{
 	display: flex;
 	justify-content: space-between;
@@ -155,10 +174,22 @@ html, body{
 	letter-spacing: 1px;
 	text-transform: uppercase;
 	padding: 25px 65px;
-	background-color: white;
 	display: flex;
 	align-items: center;
+	font-size: 24px;
+	background-image: linear-gradient(180deg,transparent 0,#D4F8F1 0);
+	background-position: 0 80px;
+    background-repeat: no-repeat;
+    transition: background-position .08s ease-out!important;
+    box-shadow: none!important;
+    text-decoration: none;
+    color: black;
 }
+
+.file--container:hover{
+	background-position: 0 0em;
+}
+
 
 .file--container [type=file] {
     cursor: inherit;
@@ -180,6 +211,27 @@ html, body{
 
 .file--container [type=file] {
     cursor: pointer;
+}
+
+.fileUpload--formats{
+	font-family: 'Muli', sans-serif;
+	font-size: 14px;
+	font-weight: 700;
+	margin: 25px 0 5px 0;
+}
+
+.fileUpload--disclaimer{
+	font-family: 'Muli', sans-serif;
+	font-size: 12px;
+	font-weight: 400;
+	margin-top: 0;
+	margin-bottom: 50px;
+
+}
+
+.footer{
+	height: 200px;
+	background-color: #444444;
 }
 
 
