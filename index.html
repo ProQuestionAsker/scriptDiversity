@@ -7,6 +7,7 @@
         <script src='https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js'></script>
         <link rel="stylesheet" href="style.css">
         <link href="https://fonts.googleapis.com/css?family=Muli:400,700,900" rel="stylesheet">
+        <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
     </head>
   
   <body>
@@ -29,7 +30,7 @@
     <section class="fileUpload">
 
         <label class="file--container">
-            Analyze Script
+            <p class="file--container__label">Analyze Script</p>
             <input type="file" id="input-file" class="input--button">
         </label>
 
@@ -38,10 +39,47 @@
 
     </section>
 
-<!--     <div class="form--details">
-        <input type="button" id="detailToggle" value="Hide Details">
-        <form id="characterDetails"></form>
-    </div> -->
+    <section class="form form--step1">
+
+        <div class="form--header">
+            <div class="form--hidden">
+            </div>
+
+            <h2 class="form--label"><span class="step--bold">Step 1:</span> Categories</h2>
+
+            <div class="form--expand">
+                <p class="form--expand__button">Collapse</p>
+                <i class="fas fa-angle-up"></i>
+            </div>
+        </div>
+
+        <p class="form--description">How do you want to measure diversity? We suggest starting with your characters' <em>gender</em>, <em>race</em>, and <em>ability</em>, but you can decide below. </p>
+
+
+    <div class="form--wrapper">
+        <div class="form--details">
+<!--             <input type="button" id="detailToggle" value="Hide Details"> -->
+
+        <div class="form--details__text">
+           <p class="label--title">Category Names</p>
+           <p class="label--description">You can assign up to 6 different labels for each category. Once this step is complete, you'll assign one label per category to each of the speaking characters in your script.</p>
+        </div>
+            <form id="details--categories"></form>
+        </div>
+
+        <div class="form--save">
+            <p class="button">Save &amp; Continue</p>
+        </div>
+
+    </div>
+
+        <div class="form--details">
+<!--             <input type="button" id="detailToggle" value="Hide Details"> -->
+            <form id="details--characters"></form>
+        </div>
+
+
+    </section>
 
 <!--     <div class="graphic">
         <input type="button" class="sortButton" id="sortButton--0" data-title="title0">

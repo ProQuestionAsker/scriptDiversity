@@ -73,11 +73,41 @@ function readFileContent(file) {
   })
 }
 
+
+function hideIntro(){
+	d3.select('.intro')
+		.classed('collapsed', true)
+
+	let label = d3.select('.file--container__label')
+		.text("use new script")
+
+	let header = d3.select('.header')
+		.classed('shrunk', true)
+		
+	header.select('.header--attribution')
+		.transition()
+		.duration(350)
+		.style("opacity", 0)
+
+	header.select('.header--title')
+		.transition()
+		.duration(350)
+		.style('font-size', '32px')
+
+	d3.select('.file--container')
+		.classed('uploaded', true)
+
+	d3.select('.fileUpload')
+		.style("margin-top", "0px")
+
+}
+
 function setup(){
 	setupScriptRegex()
 	defineInline()
 	parsedScript = parseToJson()
 	cleanScript()
+	hideIntro()
 }
 
 function cleanScript(){
@@ -487,7 +517,102 @@ function isolateCharacters(){
 }
 
 function setupForm(){
-	const details = d3.select('#characterDetails')
+
+	const categories = d3.select('#details--categories')
+
+	let defaultTitles = ['Gender', 'Race', 'Ability']
+	title0 = defaultTitles[0]
+	title1 = defaultTitles[1]
+	title2 = defaultTitles[2]
+
+	const titles = categories
+		.append('g')
+		.attr('class', 'g-title')
+
+	/*titles
+		.append('text')
+		.text('Category Names')
+		.attr('class', 'label--title')*/
+
+	const titleGroups = titles.selectAll('.g-title__entry')
+		.data(defaultTitles)
+
+	const titleGroupsEnter = titleGroups
+		.enter()
+		.append('g')
+		.attr('class', (d, i) => `g-title__entry title__entry${i}`)
+
+
+	titleGroupsEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', (d, i) => `input--title input--title__${i}`)
+		.attr('value', (d, i) => defaultTitles[i])
+		.attr('data-index', (d, i) => i)
+		.on('change', updateTitle)
+
+	const userEntries = ['A', 'B', 'C', 'D', 'E', 'F']
+
+	const entryGroups = d3.selectAll('.g-title__entry')
+		.data(userEntries)
+/*
+	const entryGroupsEnter = entryGroups
+		.enter()
+		.append('g')
+		.attr('class', (d, i) => `g-group user__entry${i}`)*/
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--0')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} A`)
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--1')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} B`)
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--2')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} C`)
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--3')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} D`)
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--4')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} E`)
+
+	entryGroups
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--5')
+		.attr('placeholder', (d, i) => `${defaultTitles[i]} F`)
+
+/*
+	entryGroupsEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--1')
+		.attr('placeholder', (d, i) => `${defaultTitles[1]} ${d}}`)
+
+	entryGroupsEnter
+		.append('input')
+		.attr('type', 'text')
+		.attr('class', 'input input--2')
+		.attr('placeholder', (d, i) => `${defaultTitles[2]} ${d}}`)*/
+
+	
+
+	/*const details = d3.select('#details--characters')
 
 	let defaultTitles = ['gender', 'race', 'ability']
 	title0 = defaultTitles[0]
@@ -563,9 +688,12 @@ function setupForm(){
 		.attr('value', 'Submit These Details')
 		.attr('class', 'button button--submit')
 		.on('click', handleClick)
+*/
+	d3.select('.form')
+		.classed('form--expanded', true)
 
-	d3.select('#detailToggle')
-		.on('click', toggleDetail)
+/*	d3.select('#detailToggle')
+		.on('click', toggleDetail)*/
 }
 
 function handleClick(){
@@ -591,7 +719,7 @@ function handleClick(){
 }
 
 function handleFormElements(selector){
-	let form = d3.select('#characterDetails')
+	let form = d3.select('#details--categories')
 
 	let formNodeList = form.selectAll(selector)._groups[0]
 
@@ -604,7 +732,7 @@ function handleFormElements(selector){
 }
 
 function toggleDetail(){
-	let form = d3.select('#characterDetails')
+	let form = d3.select('#details--categories')
 
 	form
 		.classed('is-hidden', !form.classed('is-hidden'))
