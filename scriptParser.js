@@ -550,6 +550,7 @@ function setupForm(){
 		.append('input')
 		.attr('type', 'text')
 		.attr('class', (d, i) => `input--title input--title__${i}`)
+		.attr('placeholder', (d, i) => defaultTitles[i])
 		.attr('value', (d, i) => defaultTitles[i])
 		.attr('data-index', (d, i) => i)
 		.on('change', updateTitle)
@@ -751,6 +752,8 @@ function saveCategories(){
 	d3.select('.form--step2')
 		.classed('form--expanded', true)
 
+		console.log({inputCategories})
+
 
 }
 
@@ -827,26 +830,17 @@ function toggleDetail(){
 }
 
 function updateTitle(){
-	let checkedBox = d3.select(this).node()
-	let titleBox = checkedBox.previousElementSibling
-	let titleValue = titleBox.value
+	let newTitle = d3.select(this).node().value
 
-	let titleGroup = d3.select('.g-title')
+	let parent = d3.select(this.parentNode)
 
-	let changedIndex = titleBox.dataset.index
+	let inputs = parent.selectAll('.input')
 
-	let changeableInputs = d3.selectAll(`.input--${changedIndex}`)
+	let letters = ['A', 'B', 'C', 'D', 'E', 'F']
 
-	changeableInputs
-		.attr('placeholder', (d, i) => `Enter ${d.name}s ${titleValue}`)
+	inputs
+		.attr('placeholder', (d, i) => `${newTitle} ${letters[i]}`)
 
-	if (changedIndex == 0) {
-		title0 = titleValue
-	} else if (changedIndex == 1) {
-		title1 = titleValue
-	} else if (changedIndex == 2) {
-		title2 = titleValue
-	}
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
