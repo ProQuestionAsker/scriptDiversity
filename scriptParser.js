@@ -29,6 +29,9 @@ let maxRow = null
 let nestedLengths = null
 let activeLength = null
 
+// user inputs
+let inputCategories = null
+
 let rowLength = 4
 
 const MARGIN = 32;
@@ -597,6 +600,20 @@ function setupForm(){
 		.attr('class', 'input input--5')
 		.attr('placeholder', (d, i) => `${defaultTitles[i]} F`)
 
+	let test = d3.selectAll('.input')
+
+	let nodes = test._groups[0]
+
+	let testValues = [].map.call(nodes, function( input ) {
+        return input.value;
+    })
+
+    let saveButton = d3.select('.form--save')
+
+    saveButton
+    	.on('click', saveCategories)
+
+
 /*
 	entryGroupsEnter
 		.append('input')
@@ -694,6 +711,70 @@ function setupForm(){
 
 /*	d3.select('#detailToggle')
 		.on('click', toggleDetail)*/
+}
+
+function saveCategories(){
+	// Finding selected titles
+	let categoryTitles = d3.selectAll('.input--title')
+
+	let titleNodes = categoryTitles._groups[0]
+
+	let titles = [].map.call(titleNodes, function( input ) {
+		return input.value;
+	})
+
+	let categoryInputs = d3.selectAll('.input')
+
+	let nodes = categoryInputs._groups[0]
+
+	let values = [].map.call(nodes, function( input ) {
+		return input.value;
+	})
+
+	let column1 = values.slice(0, 6)
+	let column2 = values.slice(6, 12)
+	let column3 = values.slice(12, 17)
+
+	let column = [column1, column2, column3]
+
+	inputCategories = titles.map(function(d, i){
+		return {title: d, labels: column[i]}
+	})
+
+
+	d3.select('.form--wrapper__step1')
+		.classed('wrapper--collapsed', true)
+
+	d3.select('.form--header__step1')
+		.on('click', expandCollapseStep1)
+
+	d3.select('.form--step2')
+		.classed('form--expanded', true)
+
+
+}
+
+function expandCollapseStep1(){
+	let selected = d3.select('.form--step1')
+
+	let form = selected.select('.form--wrapper')
+
+	form
+		.classed('wrapper--collapsed', form.classed('wrapper--collapsed') ? false : true)
+
+	let button = d3.select('.form--expand__button')
+
+	button
+		.text(form.classed('wrapper--collapsed') ? 'Expand' : 'Collapse')
+
+	let arrow = d3.select('.fas')
+
+	arrow
+		.classed('fa-angle-down', form.classed('wrapper--collapsed') ? true : false)
+		.classed('fa-angle-up', form.classed('wrapper--collapsed') ? false : true)
+
+		console.log({form})
+
 }
 
 function handleClick(){

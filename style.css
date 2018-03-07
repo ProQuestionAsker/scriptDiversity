@@ -98,10 +98,12 @@ a:hover{
 .input{
 	width: 180px;
 	margin: 0 auto;
-	color: #b0b0b0;
-	-webkit-text-fill-color: #b0b0b0;
 	font-family: 'Muli', sans-serif;
 	font-size: 14px;
+}
+
+::placeholder{
+	color: #b0b0b0;
 }
 
 .button--updateTitle{
@@ -330,9 +332,18 @@ a:hover{
 }
 
 .form--wrapper{
+	max-height: 500px;
 	width: 100%;
 	background-color: #eeeeee;
 	border-top: 1px solid #aaaaaa;
+	border-bottom: 1px solid #aaaaaa;
+	transition: max-height 0.35s;
+	-webkit-transition: max-height 0.35s;
+	-o-transition: max-height 0.35s;
+}
+
+.wrapper--collapsed{
+	max-height: 0px;
 }
 
 .form--details{
