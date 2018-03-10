@@ -559,11 +559,6 @@ function setupForm(){
 
 	const entryGroups = d3.selectAll('.g-title__entry')
 		.data(userEntries)
-/*
-	const entryGroupsEnter = entryGroups
-		.enter()
-		.append('g')
-		.attr('class', (d, i) => `g-group user__entry${i}`)*/
 
 	entryGroups
 		.append('input')
@@ -614,62 +609,9 @@ function setupForm(){
     saveButton
     	.on('click', saveCategories)
 
+	const characters = d3.select('#details--characters')
 
-/*
-	entryGroupsEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', 'input input--1')
-		.attr('placeholder', (d, i) => `${defaultTitles[1]} ${d}}`)
-
-	entryGroupsEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', 'input input--2')
-		.attr('placeholder', (d, i) => `${defaultTitles[2]} ${d}}`)*/
-
-	
-
-	/*const details = d3.select('#details--characters')
-
-	let defaultTitles = ['gender', 'race', 'ability']
-	title0 = defaultTitles[0]
-	title1 = defaultTitles[1]
-	title2 = defaultTitles[2]
-
-	const titles = details
-		.append('g')
-		.attr('class', 'g-title')
-
-	titles
-		.append('text')
-		.text('Character Name')
-		.attr('class', 'label--title')
-
-	const titleGroups = titles.selectAll('.g-title__entry')
-		.data(defaultTitles)
-
-	const titleGroupsEnter = titleGroups
-		.enter()
-		.append('g')
-		.attr('class', (d, i) => `g-title__entry title__entry${i}`)
-
-
-	titleGroupsEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', (d, i) => `input--title input--title__${i}`)
-		.attr('value', (d, i) => defaultTitles[i])
-		.attr('data-index', (d, i) => i)
-
-	titleGroupsEnter
-		.append('input')
-		.attr('type', 'button')
-		.attr('class', 'button button--updateTitle')
-		.attr('value', '✔')
-		.on('click', updateTitle)
-
-	const groups = details.selectAll('.g-group')
+	const groups = characters.selectAll('.g-group')
 		.data(characterLines)
 
 	const groupEnter = groups
@@ -680,38 +622,23 @@ function setupForm(){
 	groupEnter
 		.append('text')
 		.text(d => d.name)
-		.attr('class', 'label')
+		.attr('class', 'character--label')
 
 	groupEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', 'input input--0')
-		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[0]}`)
+		.append('select')
+		.attr('class', 'dropdown dropdown--0')
 
 	groupEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', 'input input--1')
-		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[1]}`)
+		.append('select')
+		.attr('class', 'dropdown dropdown--1')
 
 	groupEnter
-		.append('input')
-		.attr('type', 'text')
-		.attr('class', 'input input--2')
-		.attr('placeholder', (d, i) => `Enter ${d.name}s ${defaultTitles[2]}`)
+		.append('select')
+		.attr('class', 'dropdown dropdown--2')
 
-	details
-		.append('input')
-		.attr('type', 'button')
-		.attr('value', 'Submit These Details')
-		.attr('class', 'button button--submit')
-		.on('click', handleClick)
-*/
 	d3.select('.form')
 		.classed('form--expanded', true)
 
-/*	d3.select('#detailToggle')
-		.on('click', toggleDetail)*/
 }
 
 function saveCategories(){
@@ -753,6 +680,31 @@ function saveCategories(){
 		.classed('form--expanded', true)
 
 		console.log({inputCategories})
+
+	d3.selectAll('.dropdown--0')
+		.selectAll('option')
+		.data(column1)
+		.enter()
+	      .append("option")
+	      .attr("value", (d, i) => i)
+	      .text(d => d)
+
+	d3.selectAll('.dropdown--1')
+		.selectAll('option')
+		.data(column2)
+		.enter()
+	      .append("option")
+	      .attr("value", (d, i) => i)
+	      .text(d => d)
+
+	d3.selectAll('.dropdown--2')
+		.selectAll('option')
+		.data(column3)
+		.enter()
+	      .append("option")
+	      .attr("value", (d, i) => i)
+	      .text(d => d)
+
 
 
 }
