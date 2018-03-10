@@ -659,9 +659,9 @@ function saveCategories(){
 		return input.value;
 	})
 
-	let column1 = values.slice(0, 6)
-	let column2 = values.slice(6, 12)
-	let column3 = values.slice(12, 17)
+	let column1 = values.slice(0, 6).filter(d => d)
+	let column2 = values.slice(6, 12).filter(d => d)
+	let column3 = values.slice(12, 17).filter(d => d)
 
 	let column = [column1, column2, column3]
 
@@ -669,6 +669,7 @@ function saveCategories(){
 		return {title: d, labels: column[i]}
 	})
 
+	console.log({inputCategories})
 
 	d3.select('.form--wrapper__step1')
 		.classed('wrapper--collapsed', true)
